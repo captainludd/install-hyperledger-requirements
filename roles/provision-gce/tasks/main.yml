@@ -1,0 +1,30 @@
+# Create a single Debian 8 instance in the us-central1-a Zone
+# Use existing disks, custom network/subnetwork, set service account permissions
+# add tags and metadata.
+
+    gce:
+      instance_names: my-test-instance
+      zone: us-central1-a
+      machine_type: n1-standard-1
+      state: present
+      metadata: '{"db":"postgres", "group":"qa", "id":500}'
+      tags:
+        - http-server
+        - my-other-tag
+      disks:
+        - name: disk-2
+          mode: READ_WRITE
+        - name: disk-3
+          mode: READ_ONLY
+      disk_auto_delete: false
+      network: foobar-network
+      subnetwork: foobar-subnetwork-1
+      preemptible: true
+      ip_forward: true
+      service_account_permissions:
+        - storage-full
+        - taskqueue
+        - bigquery
+#      service_account_email: "your-sa@your-project-name.iam.gserviceaccount.com"
+#      credentials_file: "/path/to/your-key.json"
+#      project_id: "your-project-name"

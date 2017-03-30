@@ -1,0 +1,33 @@
+---
+- name: Install python virtual env
+  pip:
+    name: virtualenv
+    state: present 
+  become: true
+
+
+- name: Install prerequisites for fabric testing via pip
+  pip:
+    name: "{{ item }}"
+    state: present
+    virtualenv: /tmp/venv/fabric
+#    virtualenv_command: virtualenv
+  become: true
+  with_items:
+    - nose
+    - behave
+  
+
+- name: Cloning the Fabric project
+  git:
+    repo: ssh://{{ linuxfoundation_user }}@gerrit.hyperledger.org:29418/fabric
+    dest: /tmp/fabric
+    accept_hostkey: yes
+    key_file: /home/{{ ansible_user }}/.ssh/id_rsa
+
+- name: Copy git hooks
+  command: scp -p -P 29418 -i /home/{{ ansible_user }}/.ssh/id_rsa {{ linuxfoundation_user }}@gerrit.hyperledger.org:hooks/commit-msg /tmp/fabric/.git/hooks/ 
+#    dest: /tmp/fabric/.git/hooks/
+#    owner: rhill
+    
+ 

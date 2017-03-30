@@ -1,0 +1,62 @@
+---
+#"    checksum: "{{ go_tarball_checksum }}"
+
+
+- name: Register the current Go version (if any)
+  command: /usr/local/go/bin/go version
+  ignore_errors: yes
+  register: golang_version
+  changed_when: false
+
+
+- name: Remove old installation of Go
+  file:
+    path: /usr/local/go
+    state: absent
+  when: golang_version|failed or golang_version.stdout != golang_version_target
+  become: True 
+
+- name: Download the Go tarball
+  get_url: 
+    url: "https://storage.googleapis.com/golang/{{ go_tarball }}.tar.gz"
+    dest: "/tmp/go{{ go_tarball }}.tar.gz"
+
+- name: Extract and install Go
+  unarchive: 
+    src: "/tmp/go{{ go_tarball }}.tar.gz"
+    dest: /usr/local/
+    copy: no
+  when: golang_version|failed or golang_version.stdout != golang_version_target
+  become: True
+
+- name: Symlink Go into /usr/local/bin
+  file: 
+    src: "/usr/local/go/bin/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    state: link
+  with_items:
+    - go
+    - godoc
+    - gofmt
+  when: golang_version|failed or golang_version.stdout != golang_version_target
+  become: True
+
+- name: Install Godep
+  command: go get github.com/tools/godep
+           creates="{{ golang_path }}/bin/godep"
+  environment:
+    GOPATH: "{{ golang_path }}"
+
+
+- name: Add the Go bin directory to the PATH environment variable for all users
+  copy:
+    src: go-bin.sh
+    dest: /etc/profile.d
+  become: True
+
+- name: Set GOPATH for all users
+  copy:
+    src: go-path.sh
+    dest: /etc/profile.d
+  when: set_go_path
+  become: True

@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: verify that docker can launch hello-world container
+      docker_container:
+        name: hello-world_testrun
+        image: hello-world
+        detach: false
+        state: present

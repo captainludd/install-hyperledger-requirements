@@ -1,0 +1,33 @@
+---
+
+- name: get uname -m
+  shell: uname -m
+  register: uname_m
+  become: true   
+
+- name: get uname -s
+  shell: uname -s
+  register: uname_s
+  become: true   
+
+
+- name: Construct the docker-compose-url
+  set_fact:
+   docker_compose_url: "https://github.com/docker/compose/releases/download/{{docker_compose_version}}/docker-compose-{{ uname_s.stdout }}-{{ uname_m.stdout }}"
+  become: true   
+
+- name: Download docker-compose
+  get_url:
+    url: "{{ docker_compose_url }}"
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+  become: true   
+
+#- name: Clone docker-compose-git 
+#  git:
+#    repo: https://github.com/docker/compose.git
+#    dest: /tmp/docker-compose
+#    version: release
+#  become: true   
+#
+

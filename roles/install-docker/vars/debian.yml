@@ -1,0 +1,19 @@
+docker_kernel_min_version: '3.2'
+
+docker_pre_packages:
+  - apt-transport-https
+  - python-pip
+  - software-properties-common
+
+docker_apt_key: 58118E89F3A912897C070ADBF76221572C52609D
+
+docker_apt_repo: >
+  deb https://apt.dockerproject.org/repo
+  {{ ansible_distro }}-{{ ansible_distribution_release }}
+  main
+
+docker_packages:
+  - docker-engine
+
+docker_services:
+  - docker

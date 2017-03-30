@@ -1,0 +1,17 @@
+---
+
+- hosts: all
+  roles:
+    - install-pip
+    - install-git
+    - install-go  
+    - install-docker
+    - install-docker-compose
+    - install-fabric    
+    - install-nvm
+  vars:
+    docker_version:
+    docker_compose_version: 1.11.2
+    pip_version: 
+
+

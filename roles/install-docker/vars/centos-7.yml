@@ -1,0 +1,11 @@
+docker_kernel_min_version: '3.10.0-327'
+
+docker_pre_packages:
+  - device-mapper-libs
+  - python-pip
+
+docker_packages:
+  - docker-latest
+
+docker_services:
+  - docker-latest

@@ -1,0 +1,64 @@
+---
+
+- name: Get script used to install nvm
+  uri:
+    url: https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh
+    method: GET
+    creates: install.sh
+    dest: /tmp
+
+
+- name: Set the NVM environment variables to global install and run the install script
+  shell: bash /tmp/install.sh 
+  environment:
+      NVM_DIR: /usr/local/nvm
+      PROFILE: /home/{{ ansible_user }}/.bashrc
+  become: true
+
+- name: Install node
+  command: bash -c '. /usr/local/nvm/nvm.sh; nvm install v6.9.5'
+  become: true
+
+
+- name: Verify node version
+  shell: bash -c '. /usr/local/nvm/nvm.sh; which node'
+  register: nodepath
+  become: true
+
+
+- debug:
+    var: nodepath
+#    verbosity: 2
+
+
+- name: Set perms on nodepath
+  file:
+    path: '{{ nodepath.stdout }}' 
+    mode: 0755
+  become: true
+
+
+  #- name: Copy nodepath to  global dir /usr/local
+  #copy:
+  #  src: '{{ nodepath.stdout }}'
+  #  dest: /usr/local/
+  #  force: no
+  #become: true
+
+# npm config delete prefix
+
+
+
+- name: Verify that nvm is installed
+  shell: . /home/{{ ansible_user }}/.bashrc && command -v nvm
+  environment: 
+    NVM_DIR: /usr/local/nvm
+  register: nvmstate  
+
+- debug:
+    var: nvmstate
+
+    
+- name: Verify that npm config delete prefix runs
+  shell: bash -c 'npm config delete prefix'
+  register: npmprefix  
