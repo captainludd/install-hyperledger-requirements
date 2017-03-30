@@ -1,2 +1,2 @@
 # install-hyperledger-requirements
-Provision a virgin fedora machine to run hyperledger
+Provision a virgin fedora24  machine to run hyperledger
