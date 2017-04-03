@@ -3,7 +3,10 @@ Provision a virgin  machine to run hyperledger. tested on Centos 7, Ubuntu 16.4 
 
 ## Requirements
 A user account at   https://gerrit.hyperledger.org
-SSH access to the target machine and the ansible host. This may also be the target machine but  it  does not need to be.
+
+SSH access to the target machine and the ansible host. 
+
+This may also be the target machine but  it  does not need to be.
 
 ## Steps
 SSH into the target machine where you want to install and run hyperledger.
@@ -27,6 +30,15 @@ or
 
     sudo apt-get-install ansible 
 
+
+
+Configure ansible hosts file to give access
+
+    vim hosts
+
+>    127.0.0.1    ansible_ssh_user=${targetuser}   ansible_ssh_pass=${targetpassword}
+
+
 Run ansible on the localhost
 
 Where:
@@ -35,4 +47,4 @@ targetuser = my default user on the target machine
 
 targetpassword = my ssh password on the  target  machine
 
-    ansible-playbook --extra-vars="ansible_ssh_user=${targetuser} ansible_ssh_pass=${targetpassword} linuxfoundation_user=${mylinuxfoundationuser}" playbook.yml -vvv
+    ansible-playbook -i hosts --extra-vars="linuxfoundation_user=${mylinuxfoundationuser}" playbook.yml -vvv
